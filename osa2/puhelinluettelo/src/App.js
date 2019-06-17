@@ -35,9 +35,7 @@ const App = () => {
             setPersons(persons.map(person => person.id !== changedPerson.id ? person : changedPerson))
             setStyle("success")
             setErrorMessage(`Numero päivitetty onnistuneesti henkilölle ${returnedPerson.name}!`)
-            setTimeout(() => {
-              setErrorMessage(null)
-            }, 3000)
+            
           })
       }
     }
@@ -53,11 +51,16 @@ const App = () => {
           setPersons(persons.concat(newPerson))
           setStyle("success")
           setErrorMessage(`Numero lisätty onnistuneesti henkilölle ${newPerson.name}!`)
-          setTimeout(() => {
-            setErrorMessage(null)
-          }, 3000)
+          
+        })
+        .catch(error => {
+          setStyle('error')
+          setErrorMessage(`${error.response.data.error}`)
         })
     }
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 3000)
     setNewName('')
     setNewNumber('')
   }
