@@ -25,22 +25,6 @@ const favoriteBlog = blogs => {
   return blogs.reduce(compare, [])
 }
 
-const mostLikes = blogs => {
-  const reducer = (before, current) => {
-
-  }
-
-  return favoriteBlog( blogs.reduce(reducer, []) )
-}
-
-const mostBlogs = blogs => {
-  const reducer = (before, current) => {
-
-  }
-
-  return blogs.reduce(reducer, [])
-}
-
 const listWithOneBlog = [
   {
     title: 'Go To Statement Considered Harmful',

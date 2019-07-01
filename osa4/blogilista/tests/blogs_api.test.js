@@ -53,8 +53,6 @@ describe('addition of a new blog', () => {
 
     const blogs = await helper.blogsInDb()
 
-    console.log(blogs)
-
     const contents = blogs.map(r => r.title)
 
     expect(blogs.length).toBe(helper.listWithManyBlogs.length + 1)
