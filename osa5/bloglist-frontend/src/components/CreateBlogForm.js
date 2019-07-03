@@ -8,17 +8,21 @@ const CreateBlogForm = (props) => {
     const [url, setUrl] = useState('')
     
     const addBlog = (event) => {
-        event.preventDefault()
-        const newBlog = { title, author, url }
+      event.preventDefault()
+      const newBlog = { title, author, url }
 
-        blogService
-            .create(newBlog)
-            .then((returnedBlog) => {
-                props.setBlogs(props.blogs.concat(returnedBlog))
-                setTitle('')
-                setAuthor('')
-                setUrl('')
-            })
+      blogService
+        .create(newBlog)
+        .then((returnedBlog) => {
+          props.setBlogs(props.blogs.concat(returnedBlog))
+          setTitle('')
+          setAuthor('')
+          setUrl('')
+          props.notify('New blog created!')
+      })
+      .catch(error => {
+          props.nofity('Creating a new blog failed', 'error')
+      })
     }
 
     const handleTitleChange = (event) => {

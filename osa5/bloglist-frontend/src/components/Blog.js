@@ -1,4 +1,5 @@
 import React from 'react'
+
 const Blog = ({ blog }) => {
   if (!blog) {
     return null
