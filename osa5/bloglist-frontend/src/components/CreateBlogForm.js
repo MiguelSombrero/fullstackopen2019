@@ -21,7 +21,7 @@ const CreateBlogForm = (props) => {
           props.notify('New blog created!')
       })
       .catch(error => {
-          props.nofity('Creating a new blog failed', 'error')
+          props.notify('Creating a new blog failed', 'error')
       })
     }
 

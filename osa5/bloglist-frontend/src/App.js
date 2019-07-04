@@ -5,6 +5,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable';
 
 function App() {
   const [blogs, setBlogs] = useState([])
@@ -17,13 +18,17 @@ function App() {
   
   const notify = (message, type='success') => {
     setNotification({ message, type })
-    setTimeout(() => setNotification({ message: null }), 4000)
+    setTimeout(() => setNotification({ message: null }), 3000)
   }
 
   useEffect(() => {
     blogService.getAll()
-      .then(initialBlogs => setBlogs(initialBlogs))
+      .then(initialBlogs => {
+        setBlogs(initialBlogs.sort( (a, b) => b.likes - a.likes ))
+      })
   }, [])
+
+  console.log(blogs)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -91,13 +96,23 @@ function App() {
       </p>
       
       <h2>Create new</h2>
-      <CreateBlogForm
-        blogs={blogs}
-        setBlogs={setBlogs}
-        notify={notify}
-      />
+      <Togglable buttonLabel='new blog'>
+        <CreateBlogForm
+          blogs={blogs}
+          setBlogs={setBlogs}
+          notify={notify}
+        />
+      </Togglable>
 
-      {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+      {blogs.map(blog =>
+        <Blog
+          key={blog.id}
+          blog={blog}
+          blogs={blogs}
+          setBlogs={setBlogs}
+          notify={notify}
+        />
+      )}
     </div>
   )
 }
