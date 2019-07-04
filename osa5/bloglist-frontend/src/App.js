@@ -28,8 +28,6 @@ function App() {
       })
   }, [])
 
-  console.log(blogs)
-
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
@@ -111,6 +109,7 @@ function App() {
           blogs={blogs}
           setBlogs={setBlogs}
           notify={notify}
+          user={user}
         />
       )}
     </div>

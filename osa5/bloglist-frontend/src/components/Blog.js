@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, notify }) => {
+const Blog = ({ blog, blogs, setBlogs, notify, user }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -32,9 +32,6 @@ const Blog = ({ blog, blogs, setBlogs, notify }) => {
 
   const removeBlog = () => {
     if (window.confirm(`Remove blog ${blog.title} ?`)) {
-
-      console.log(blog.id)
-
       blogService
         .remove(blog.id)
         .then(() => {
@@ -60,7 +57,7 @@ const Blog = ({ blog, blogs, setBlogs, notify }) => {
         {blog.url}<br />
         {blog.likes} likes <button onClick={updateBlog}>like</button><br />
         added by {blog.user.name}<br />
-        <button onClick={removeBlog}>remove</button>
+        {user.username === blog.user.username && <button onClick={removeBlog}>remove</button>}
       </div>
     )
   }
