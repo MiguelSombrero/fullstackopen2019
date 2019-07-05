@@ -2,7 +2,7 @@ import React from 'react'
 
 const Notification = ({ notification }) => {
   if (notification.message === null) {
-      return null
+    return null
   }
 
   const style = {
@@ -16,7 +16,7 @@ const Notification = ({ notification }) => {
 
   return (
     <div style={style}>
-        {notification.message}
+      {notification.message}
     </div>
   )
 }

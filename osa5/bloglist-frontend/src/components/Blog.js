@@ -16,16 +16,16 @@ const Blog = ({ blog, blogs, setBlogs, notify, user }) => {
   }
 
   const updateBlog = () => {
-     const updateableBlog = {
-      ...blog, likes: blog.likes + 1, user: blog.user.id}
-    
+    const updateableBlog = {
+      ...blog, likes: blog.likes + 1, user: blog.user.id }
+
     blogService
       .update(blog.id, updateableBlog)
       .then(updatedBlog => {
         setBlogs(blogs.map(b => b.id === blog.id ? updatedBlog : b))
         notify('Blog updated!')
       })
-      .catch(error => {
+      .catch(() => {
         notify('Updating a blog failed', 'error')
       })
   }
@@ -38,7 +38,7 @@ const Blog = ({ blog, blogs, setBlogs, notify, user }) => {
           setBlogs(blogs.filter(b => b.id !== blog.id))
           notify('Blog removed succesfully!')
         })
-        .catch(error => {
+        .catch(() => {
           notify('Remove blog failed', 'error')
         })
     }
@@ -48,25 +48,27 @@ const Blog = ({ blog, blogs, setBlogs, notify, user }) => {
     return null
   }
 
-  if (visible) {
-    return (
-      <div style={style}>
-        <div onClick={toggleVisibility} >
-          {blog.title} {blog.author}<br />
-        </div>
-        {blog.url}<br />
-        {blog.likes} likes <button onClick={updateBlog}>like</button><br />
-        added by {blog.user.name}<br />
-        {user.username === blog.user.username && <button onClick={removeBlog}>remove</button>}
-      </div>
-    )
-  }
-
   return (
-    <div onClick={toggleVisibility}>
-      {blog.title} {blog.author}
+    <div style={style} className='fullElement' >
+      <div onClick={toggleVisibility} className='heading' >
+        {blog.title} {blog.author}<br />
+      </div>
+
+      {visible &&
+        <div className='content' >
+          {blog.url}<br />
+          {blog.likes} likes <button onClick={updateBlog}>like</button><br />
+          added by {blog.user.name}<br />
+
+          {user.username === blog.user.username &&
+            <button onClick={removeBlog}>remove</button>
+          }
+        </div>
+      }
     </div>
   )
+
+
 }
 
 export default Blog
