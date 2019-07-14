@@ -49,7 +49,7 @@ const Blog = ({ blog, blogs, setBlogs, notify, user }) => {
   }
 
   return (
-    <div style={style} className='fullElement' >
+    <div style={style} className='blog' >
       <div onClick={toggleVisibility} className='heading' >
         {blog.title} {blog.author}<br />
       </div>

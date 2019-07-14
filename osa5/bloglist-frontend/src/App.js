@@ -6,15 +6,16 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import { useField } from './hooks'
 
 function App() {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const username = useField('text')
+  const password = useField('password')
+  const title = useField('text')
+  const author = useField('text')
+  const url = useField('text')
   const [notification, setNotification] = useState({
     message: null
   })
@@ -42,9 +43,10 @@ function App() {
 
   const handleLogin = async (event) => {
     event.preventDefault()
+
     try {
       const loggedUser = await loginService.login({
-        username, password
+        username: username.value, password: password.value
       })
 
       window.localStorage.setItem(
@@ -53,8 +55,8 @@ function App() {
 
       blogService.setToken(loggedUser.token)
       setUser(loggedUser)
-      setUsername('')
-      setPassword('')
+      username.reset()
+      password.reset()
       notify('Login succesfull')
 
     } catch (exception) {
@@ -71,40 +73,25 @@ function App() {
 
   const addBlog = (event) => {
     event.preventDefault()
-    const newBlog = { title, author, url }
+
+    const newBlog = {
+      title: title.value,
+      author: author.value,
+      url: url.value
+    }
 
     blogService
       .create(newBlog)
       .then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog))
-        setTitle('')
-        setAuthor('')
-        setUrl('')
+        title.reset()
+        author.reset()
+        url.reset()
         notify('New blog created!')
       })
       .catch(() => {
         notify('Creating a new blog failed', 'error')
       })
-  }
-
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value)
-  }
-
-  const handleAuthorChange = (event) => {
-    setAuthor(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value)
-  }
-
-  const handleUsernameChange = ({ target }) => {
-    setUsername(target.value)
-  }
-
-  const handlePasswordChange = ({ target }) => {
-    setPassword(target.value)
   }
 
   if (user === null) {
@@ -117,8 +104,6 @@ function App() {
           handleLogin={handleLogin}
           username={username}
           password={password}
-          handleUsernameChange={handleUsernameChange}
-          handlePasswordChange={handlePasswordChange}
         />
       </div>
     )
@@ -141,9 +126,6 @@ function App() {
           title={title}
           author={author}
           url={url}
-          handleTitleChange={handleTitleChange}
-          handleAuthorChange={handleAuthorChange}
-          handleUrlChange={handleUrlChange}
         />
       </Togglable>
 
