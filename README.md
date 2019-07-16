@@ -15,3 +15,5 @@ Tämä on Helsingin yliopiston [Full Stack Open 2019](https://fullstackopen.com/
 [osa4](https://github.com/MiguelSombrero/fullstackopen2019/tree/master/osa4/blogilista)
 
 [osa5](https://github.com/MiguelSombrero/fullstackopen2019/tree/master/osa5)
+
+[osa6](https://github.com/MiguelSombrero/fullstackopen2019/tree/master/osa6)
