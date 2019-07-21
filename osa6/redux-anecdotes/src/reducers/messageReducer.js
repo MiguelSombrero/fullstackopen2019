@@ -1,16 +1,18 @@
 
 const initialState = ''
 
-export const setMessage = (message) => {
-  return {
-    type: 'SET_MESSAGE',
-    message: message
-  }
-}
+export const setMessage = (message, timeout) => {
+  return async dispatch => {
+    dispatch({
+      type: 'SET_MESSAGE',
+      message
+    })
 
-export const clearMessage = () => {
-  return {
-    type: 'CLEAR_MESSAGE'
+    setTimeout(() => {
+      dispatch({
+        type: 'CLEAR_MESSAGE'
+      })
+    }, timeout*1000)
   }
 }
 

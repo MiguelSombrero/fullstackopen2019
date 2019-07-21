@@ -1,18 +1,14 @@
 import React from 'react'
 import { voteFor } from '../reducers/anecdoteReducer'
-import { setMessage, clearMessage } from '../reducers/messageReducer'
+import { setMessage } from '../reducers/messageReducer'
 import { connect } from 'react-redux'
 
 const AnecdoteList = (props) => {
   const sorter = (a, b) => b.votes - a.votes
   
-  const vote = (id, content) => {
-    props.voteFor(id)
-    props.setMessage(`you voted '${content}'`)
-    
-    setTimeout(() => {
-      props.clearMessage()
-    }, 5000)
+  const vote = (anecdote) => {
+    props.voteFor(anecdote)
+    props.setMessage(`you voted '${anecdote.content}'`, 3)
   }
 
   return (
@@ -24,7 +20,7 @@ const AnecdoteList = (props) => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id, anecdote.content)}>vote</button>
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       )}
@@ -44,7 +40,7 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
-  voteFor, setMessage, clearMessage
+  voteFor, setMessage
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnecdoteList)
