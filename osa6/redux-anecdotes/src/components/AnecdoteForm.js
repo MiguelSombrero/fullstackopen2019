@@ -5,14 +5,13 @@ import { connect } from 'react-redux'
 
 const AnecdoteForm = (props) => {
 
-  const addAnecdote = (event) => {
+  const addAnecdote = async (event) => {
     event.preventDefault()
     const content = event.target.content.value
-    props.createAnecdote(content)
-    props.setMessage(`added anecdote '${content}'`)
-    
     event.target.content.value = ''
-
+    props.setMessage(`added anecdote '${content}'`)
+    props.createAnecdote(content)
+    
     setTimeout(() => {
       props.clearMessage()
     }, 5000)
