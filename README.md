@@ -17,3 +17,5 @@ Tämä on Helsingin yliopiston [Full Stack Open 2019](https://fullstackopen.com/
 [osa5](https://github.com/MiguelSombrero/fullstackopen2019/tree/master/osa5)
 
 [osa6](https://github.com/MiguelSombrero/fullstackopen2019/tree/master/osa6)
+
+[osa7](https://github.com/MiguelSombrero/fullstackopen2019/tree/master/osa7)

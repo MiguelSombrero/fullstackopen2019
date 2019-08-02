@@ -7,29 +7,25 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useField } from './hooks'
+import { createNotification } from './reducers/notificationReducer'
+import { createBlog, initializeBlogs, updateBlog, removeBlog } from './reducers/blogReducers'
+import { connect } from 'react-redux'
 
-function App() {
-  const [blogs, setBlogs] = useState([])
+function App(props) {
   const [user, setUser] = useState(null)
   const username = useField('text')
   const password = useField('password')
   const title = useField('text')
   const author = useField('text')
   const url = useField('text')
-  const [notification, setNotification] = useState({
-    message: null
-  })
 
   const notify = (message, type='success') => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification({ message: null }), 3000)
+    props.createNotification(message, type)
+    setTimeout(() => props.createNotification('', type), 3000)
   }
 
   useEffect(() => {
-    blogService.getAll()
-      .then(initialBlogs => {
-        setBlogs(initialBlogs.sort( (a, b) => b.likes - a.likes ))
-      })
+    props.initializeBlogs()
   }, [])
 
   useEffect(() => {
@@ -80,25 +76,47 @@ function App() {
       url: url.value
     }
 
-    blogService
-      .create(newBlog)
-      .then((returnedBlog) => {
-        setBlogs(blogs.concat(returnedBlog))
-        title.reset()
-        author.reset()
-        url.reset()
-        notify('New blog created!')
-      })
-      .catch(() => {
-        notify('Creating a new blog failed', 'error')
-      })
+    try {
+      props.createBlog(newBlog)
+      title.reset()
+      author.reset()
+      url.reset()
+      notify('New blog created!')
+
+    } catch (exception) {
+      notify('Creating a new blog failed', 'error')
+    }
+  }
+
+  const updateBlog = (blog) => {
+    const updateableBlog = {
+      ...blog, likes: blog.likes + 1, user: blog.user.id }
+
+    try {
+      props.updateBlog(updateableBlog)
+      notify('Blog updated!')
+    } catch (exception) {
+      notify('Updating a blog failed', 'error')
+    }
+  }
+
+  const removeBlog = (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} ?`)) {
+
+      try {
+        props.removeBlog(blog.id)
+        notify('Blog removed succesfully!')
+      } catch (exception) {
+        notify('Remove blog failed', 'error')
+      }
+    }
   }
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification notification={notification} />
+        <Notification />
 
         <LoginForm
           handleLogin={handleLogin}
@@ -112,7 +130,7 @@ function App() {
   return (
     <div>
       <h2>Blogs</h2>
-      <Notification notification={notification} />
+      <Notification />
 
       <p>
         {user.name} logged in
@@ -129,13 +147,12 @@ function App() {
         />
       </Togglable>
 
-      {blogs.map(blog =>
+      {props.blogs.map(blog =>
         <Blog
           key={blog.id}
+          updateBlog={() => updateBlog(blog)}
+          removeBlog={() => removeBlog(blog)}
           blog={blog}
-          blogs={blogs}
-          setBlogs={setBlogs}
-          notify={notify}
           user={user}
         />
       )}
@@ -143,4 +160,14 @@ function App() {
   )
 }
 
-export default App
+const mapStateToProps = (state) => {
+  return {
+    blogs: state.blogs
+  }
+}
+
+const mapDispatchToProps = {
+  createNotification, createBlog, initializeBlogs, updateBlog, removeBlog
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

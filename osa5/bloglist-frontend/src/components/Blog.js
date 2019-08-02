@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import blogService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs, notify, user }) => {
+const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -13,35 +12,6 @@ const Blog = ({ blog, blogs, setBlogs, notify, user }) => {
     borderWidth: 1,
     padding: 5,
     margin: 5
-  }
-
-  const updateBlog = () => {
-    const updateableBlog = {
-      ...blog, likes: blog.likes + 1, user: blog.user.id }
-
-    blogService
-      .update(blog.id, updateableBlog)
-      .then(updatedBlog => {
-        setBlogs(blogs.map(b => b.id === blog.id ? updatedBlog : b))
-        notify('Blog updated!')
-      })
-      .catch(() => {
-        notify('Updating a blog failed', 'error')
-      })
-  }
-
-  const removeBlog = () => {
-    if (window.confirm(`Remove blog ${blog.title} ?`)) {
-      blogService
-        .remove(blog.id)
-        .then(() => {
-          setBlogs(blogs.filter(b => b.id !== blog.id))
-          notify('Blog removed succesfully!')
-        })
-        .catch(() => {
-          notify('Remove blog failed', 'error')
-        })
-    }
   }
 
   if (!blog) {
