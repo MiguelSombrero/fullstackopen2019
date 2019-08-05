@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import Users from './components/Users'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useField } from './hooks'
 import { createNotification } from './reducers/notificationReducer'
 import { createBlog, initializeBlogs, updateBlog, removeBlog } from './reducers/blogReducers'
 import { connect } from 'react-redux'
+import { logout, setUser } from './reducers/loginReducer'
+import { getAll } from './reducers/userReducer'
 
 function App(props) {
-  const [user, setUser] = useState(null)
-  const username = useField('text')
-  const password = useField('password')
   const title = useField('text')
   const author = useField('text')
   const url = useField('text')
@@ -29,43 +27,16 @@ function App(props) {
   }, [])
 
   useEffect(() => {
+    props.getAll()
+  }, [])
+
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON)
-      setUser(loggedUser)
-      blogService.setToken(loggedUser.token)
+      props.setUser(loggedUser)
     }
   }, [])
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
-    try {
-      const loggedUser = await loginService.login({
-        username: username.value, password: password.value
-      })
-
-      window.localStorage.setItem(
-        'loggedUser', JSON.stringify(loggedUser)
-      )
-
-      blogService.setToken(loggedUser.token)
-      setUser(loggedUser)
-      username.reset()
-      password.reset()
-      notify('Login succesfull')
-
-    } catch (exception) {
-      notify('Wrong username or password', 'error')
-    }
-  }
-
-  const handleLogout = () => {
-    setUser(null)
-    blogService.setToken(null)
-    window.localStorage.removeItem('loggedUser')
-    notify('User logged out')
-  }
 
   const addBlog = (event) => {
     event.preventDefault()
@@ -112,17 +83,17 @@ function App(props) {
     }
   }
 
-  if (user === null) {
+  const handleLogout = () => {
+    props.logout()
+    notify('User logged out')
+  }
+
+  if (props.user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
         <Notification />
-
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          password={password}
-        />
+        <LoginForm notify={notify}/>
       </div>
     )
   }
@@ -133,7 +104,7 @@ function App(props) {
       <Notification />
 
       <p>
-        {user.name} logged in
+        {props.user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
 
@@ -147,13 +118,14 @@ function App(props) {
         />
       </Togglable>
 
+      <Users />
+
       {props.blogs.map(blog =>
         <Blog
           key={blog.id}
           updateBlog={() => updateBlog(blog)}
           removeBlog={() => removeBlog(blog)}
           blog={blog}
-          user={user}
         />
       )}
     </div>
@@ -162,12 +134,20 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   return {
-    blogs: state.blogs
+    blogs: state.blogs,
+    user: state.user
   }
 }
 
 const mapDispatchToProps = {
-  createNotification, createBlog, initializeBlogs, updateBlog, removeBlog
+  createNotification,
+  createBlog,
+  initializeBlogs,
+  updateBlog,
+  removeBlog,
+  logout,
+  setUser,
+  getAll
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

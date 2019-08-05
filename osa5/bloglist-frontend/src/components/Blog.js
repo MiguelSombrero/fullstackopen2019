@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { connect } from 'react-redux'
 
 const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   const [visible, setVisible] = useState(false)
@@ -37,8 +38,12 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
       }
     </div>
   )
-
-
 }
 
-export default Blog
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  }
+}
+
+export default connect(mapStateToProps)(Blog)

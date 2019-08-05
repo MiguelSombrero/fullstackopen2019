@@ -1,7 +1,27 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { useField } from '../hooks/index'
+import { login } from '../reducers/loginReducer'
+import { createNotification } from '../reducers/notificationReducer'
+import { connect } from 'react-redux'
 
-const LoginForm = ({ handleLogin, username, password }) => {
+const LoginForm = (props) => {
+  const username = useField('text')
+  const password = useField('password')
+
+  const handleLogin = (event) => {
+    event.preventDefault()
+
+    try {
+      props.login(username.value, password.value)
+      username.reset()
+      password.reset()
+      props.notify('Login succesfull')
+    } catch (exception) {
+      props.notify('Login failed')
+    }
+  }
+
   return (
     <form onSubmit={handleLogin}>
       username:
@@ -16,9 +36,18 @@ const LoginForm = ({ handleLogin, username, password }) => {
 }
 
 LoginForm.propTypes = {
-  handleLogin: PropTypes.func.isRequired,
-  username: PropTypes.object.isRequired,
-  password: PropTypes.object.isRequired
+  notify: PropTypes.func.isRequired
 }
 
-export default LoginForm
+const mapStateToProps = (state) => {
+  return {
+    user: state.user
+  }
+}
+
+const mapDispatchToProps = {
+  createNotification,
+  login
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)
