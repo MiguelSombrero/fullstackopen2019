@@ -16,25 +16,17 @@ export const loginReducer = (state = initialState, action) => {
 
 export const login = (username, password) => {
   return async dispatch => {
-    try {
-      const user = await loginService.login({
-        username, password
-      })
+    const user = await loginService.login({
+      username, password
+    })
 
-      window.localStorage.setItem(
-        'loggedUser', JSON.stringify(user)
-      )
+    window.localStorage.setItem('loggedUser', JSON.stringify(user))
+    await blogService.setToken(user.token)
 
-      await blogService.setToken(user.token)
-
-      dispatch({
-        type: 'LOGIN',
-        user
-      })
-    } catch (exception) {
-
-    }
-
+    dispatch({
+      type: 'LOGIN',
+      user
+    })
   }
 }
 

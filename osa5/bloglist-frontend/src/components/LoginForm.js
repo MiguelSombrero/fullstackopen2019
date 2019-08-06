@@ -9,16 +9,16 @@ const LoginForm = (props) => {
   const username = useField('text')
   const password = useField('password')
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault()
 
     try {
-      props.login(username.value, password.value)
+      await props.login(username.value, password.value)
       username.reset()
       password.reset()
       props.notify('Login succesfull')
     } catch (exception) {
-      props.notify('Login failed')
+      props.notify('Login failed', 'error')
     }
   }
 

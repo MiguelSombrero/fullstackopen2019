@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
+import { updateBlog, removeBlog } from '../reducers/blogReducers'
 
-const Blog = ({ blog, updateBlog, removeBlog, user }) => {
-  const [visible, setVisible] = useState(false)
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
+const Blog = (props) => {
+  if (!props.blogToView) {
+    return null
   }
+
+  const blog = props.blogToView
 
   const style = {
     border: 'solid',
@@ -15,35 +16,43 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
     margin: 5
   }
 
-  if (!blog) {
-    return null
+  const updateBlog = () => {
+    const updateableBlog = {
+      ...blog, likes: blog.likes + 1, user: blog.user.id }
+
+    try {
+      props.updateBlog(updateableBlog)
+      props.notify('Blog updated!')
+    } catch (exception) {
+      props.notify('Updating a blog failed', 'error')
+    }
+  }
+
+  const removeBlog = () => {
+    if (window.confirm(`Remove blog ${blog.title} ?`)) {
+
+      try {
+        props.removeBlog(blog.id)
+        props.notify('Blog removed succesfully!')
+      } catch (exception) {
+        props.notify('Remove blog failed', 'error')
+      }
+    }
   }
 
   return (
     <div style={style} className='blog' >
-      <div onClick={toggleVisibility} className='heading' >
-        {blog.title} {blog.author}<br />
-      </div>
-
-      {visible &&
-        <div className='content' >
-          {blog.url}<br />
-          {blog.likes} likes <button onClick={updateBlog}>like</button><br />
-          added by {blog.user.name}<br />
-
-          {user.username === blog.user.username &&
-            <button onClick={removeBlog}>remove</button>
-          }
-        </div>
-      }
+      <h2>{blog.title} {blog.author}</h2>
+      <p>{blog.url}</p>
+      <p>{blog.likes} likes <button onClick={updateBlog}>like</button></p>
+      <p>added by {blog.user.name}</p>
     </div>
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.user
-  }
+const mapDispatchToProps = {
+  updateBlog,
+  removeBlog
 }
 
-export default connect(mapStateToProps)(Blog)
+export default connect(null, mapDispatchToProps)(Blog)

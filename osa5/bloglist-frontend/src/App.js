@@ -3,14 +3,18 @@ import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
 import Blog from './components/Blog'
 import Users from './components/Users'
+import User from './components/User'
 import Notification from './components/Notification'
+import Blogs from './components/Blogs'
+import Navigation from './components/Navigation'
 import Togglable from './components/Togglable'
 import { useField } from './hooks'
 import { createNotification } from './reducers/notificationReducer'
-import { createBlog, initializeBlogs, updateBlog, removeBlog } from './reducers/blogReducers'
+import { createBlog, initializeBlogs } from './reducers/blogReducers'
 import { connect } from 'react-redux'
-import { logout, setUser } from './reducers/loginReducer'
+import { setUser } from './reducers/loginReducer'
 import { getAll } from './reducers/userReducer'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 function App(props) {
   const title = useField('text')
@@ -59,35 +63,6 @@ function App(props) {
     }
   }
 
-  const updateBlog = (blog) => {
-    const updateableBlog = {
-      ...blog, likes: blog.likes + 1, user: blog.user.id }
-
-    try {
-      props.updateBlog(updateableBlog)
-      notify('Blog updated!')
-    } catch (exception) {
-      notify('Updating a blog failed', 'error')
-    }
-  }
-
-  const removeBlog = (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} ?`)) {
-
-      try {
-        props.removeBlog(blog.id)
-        notify('Blog removed succesfully!')
-      } catch (exception) {
-        notify('Remove blog failed', 'error')
-      }
-    }
-  }
-
-  const handleLogout = () => {
-    props.logout()
-    notify('User logged out')
-  }
-
   if (props.user === null) {
     return (
       <div>
@@ -98,36 +73,43 @@ function App(props) {
     )
   }
 
+  const userById = (id) =>
+    props.users.find(user => user.id === id)
+
+  const blogById = (id) =>
+    props.blogs.find(blog => blog.id === id)
+
   return (
     <div>
-      <h2>Blogs</h2>
-      <Notification />
+      <Router>
+        <div>
+          <Navigation notify={notify} />
+          <Notification />
 
-      <p>
-        {props.user.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
+          <h2>Create new blog</h2>
+          <Togglable buttonLabel='new blog'>
+            <CreateBlogForm
+              onSubmit={addBlog}
+              title={title}
+              author={author}
+              url={url}
+            />
+          </Togglable>
 
-      <h2>Create new</h2>
-      <Togglable buttonLabel='new blog'>
-        <CreateBlogForm
-          onSubmit={addBlog}
-          title={title}
-          author={author}
-          url={url}
-        />
-      </Togglable>
+          <Route exact path='/users' render={() => <Users />} />
 
-      <Users />
+          <Route exact path='/users/:id' render={({ match }) =>
+            <User userToView={userById(match.params.id)} /> }
+          />
 
-      {props.blogs.map(blog =>
-        <Blog
-          key={blog.id}
-          updateBlog={() => updateBlog(blog)}
-          removeBlog={() => removeBlog(blog)}
-          blog={blog}
-        />
-      )}
+          <Route exact path='/blogs' render={() => <Blogs />} />
+
+          <Route exact path='/blogs/:id' render={({ match }) =>
+            <Blog blogToView={blogById(match.params.id)} notify={notify} /> }
+          />
+
+        </div>
+      </Router>
     </div>
   )
 }
@@ -135,7 +117,8 @@ function App(props) {
 const mapStateToProps = (state) => {
   return {
     blogs: state.blogs,
-    user: state.user
+    user: state.user,
+    users: state.users
   }
 }
 
@@ -143,9 +126,6 @@ const mapDispatchToProps = {
   createNotification,
   createBlog,
   initializeBlogs,
-  updateBlog,
-  removeBlog,
-  logout,
   setUser,
   getAll
 }
