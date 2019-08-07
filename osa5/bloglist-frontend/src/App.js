@@ -15,6 +15,7 @@ import { connect } from 'react-redux'
 import { setUser } from './reducers/loginReducer'
 import { getAll } from './reducers/userReducer'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Container } from 'react-bootstrap'
 
 function App(props) {
   const title = useField('text')
@@ -63,16 +64,6 @@ function App(props) {
     }
   }
 
-  if (props.user === null) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <Notification />
-        <LoginForm notify={notify}/>
-      </div>
-    )
-  }
-
   const userById = (id) =>
     props.users.find(user => user.id === id)
 
@@ -80,37 +71,40 @@ function App(props) {
     props.blogs.find(blog => blog.id === id)
 
   return (
-    <div>
+    <Container fluid>
       <Router>
         <div>
           <Navigation notify={notify} />
           <Notification />
 
-          <h2>Create new blog</h2>
-          <Togglable buttonLabel='new blog'>
-            <CreateBlogForm
-              onSubmit={addBlog}
-              title={title}
-              author={author}
-              url={url}
-            />
-          </Togglable>
+          {!props.user &&
+            <LoginForm notify={notify}/>
+          }
 
-          <Route exact path='/users' render={() => <Users />} />
+          {props.user &&
+            <div>
+              <Togglable buttonLabel='new blog'>
+                <CreateBlogForm
+                  onSubmit={addBlog}
+                  title={title}
+                  author={author}
+                  url={url}
+                />
+              </Togglable>
 
-          <Route exact path='/users/:id' render={({ match }) =>
-            <User userToView={userById(match.params.id)} /> }
-          />
-
-          <Route exact path='/blogs' render={() => <Blogs />} />
-
-          <Route exact path='/blogs/:id' render={({ match }) =>
-            <Blog blogToView={blogById(match.params.id)} notify={notify} /> }
-          />
-
+              <Route exact path='/users' render={() => <Users />} />
+              <Route exact path='/blogs' render={() => <Blogs />} />
+              <Route exact path='/users/:id' render={({ match }) =>
+                <User userToView={userById(match.params.id)} /> }
+              />
+              <Route exact path='/blogs/:id' render={({ match }) =>
+                <Blog blogToView={blogById(match.params.id)} notify={notify} /> }
+              />
+            </div>
+          }
         </div>
       </Router>
-    </div>
+    </Container>
   )
 }
 

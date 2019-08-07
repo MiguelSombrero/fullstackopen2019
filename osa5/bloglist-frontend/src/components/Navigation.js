@@ -16,7 +16,7 @@ const Navigation = (props) => {
       <Navbar.Toggle aria-controls='responsive-navbar-nav' />
       <Navbar.Collapse id='responsive-navbar-nav'>
         <Nav className='mr-auto'>
-          <Nav.Link href='#' as='span'>
+          <Nav.Link href='#'>
             <Link to='/blogs' >Blogs</Link>
           </Nav.Link>
           <Nav.Link href='#' as='span'>
@@ -24,14 +24,14 @@ const Navigation = (props) => {
           </Nav.Link>
 
           {props.user &&
-            <div>
-              <Nav.Item href='#' as='span'>
-                {props.user.name} logged in
-              </Nav.Item>
-              <Nav.Link href='#' as='span'>
-                <Button className='btn nav-link' onClick={handleLogout} >Logout</Button>
-              </Nav.Link>
-            </div>
+          <Nav.Link href='#' as='span'>
+            {props.user.name} logged in
+          </Nav.Link>
+          }
+          {props.user &&
+          <Nav.Link href='#' as='span' onClick={handleLogout} >
+            Logout
+          </Nav.Link>
           }
         </Nav>
       </Navbar.Collapse>

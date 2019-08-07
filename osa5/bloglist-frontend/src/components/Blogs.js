@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Container, Row, Col } from 'react-bootstrap'
 
 const Blogs = (props) => {
   if (!props.blogs) {
@@ -10,19 +11,22 @@ const Blogs = (props) => {
   const style = {
     border: 'solid',
     borderWidth: 1,
-    padding: 5,
-    margin: 5
+    width: '15rem'
   }
 
   return (
-    <div>
-      <h2>Blogs</h2>
-      {props.blogs.map(blog =>
-        <div key={blog.id} style={style} className='blog' >
-          <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
-        </div>
-      )}
-    </div>
+    <Container>
+      <Row className='d-flex justify-content-center'>
+        <h2>Blogs</h2>
+      </Row>
+      <Row className='d-flex justify-content-center'>
+        {props.blogs.map(blog =>
+          <div key={blog.id} style={style} className='m-3 p-3'>
+            <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+          </div>
+        )}
+      </Row>
+    </Container>
   )
 }
 

@@ -1,20 +1,24 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Container } from 'react-bootstrap'
 
 const CreateBlogForm = ({ onSubmit, title, author, url }) => {
   return (
-    <form onSubmit={onSubmit}>
-      title:
-      <input {...title} />
-      <br />
-      author:
-      <input {...author} />
-      <br />
-      url:
-      <input {...url} />
-      <br />
-      <button type="submit">create</button>
-    </form>
+    <Container>
+      <h2>Create new blog</h2>
+      <form onSubmit={onSubmit}>
+        title:
+        <input {...title} />
+        <br />
+        author:
+        <input {...author} />
+        <br />
+        url:
+        <input {...url} />
+        <br />
+        <button type="submit">create</button>
+      </form>
+    </Container>
   )
 }
 

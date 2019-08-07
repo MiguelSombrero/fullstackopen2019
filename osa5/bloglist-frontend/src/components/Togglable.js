@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { Container } from 'react-bootstrap'
 
 const Togglable = (props) => {
   const [visible, setVisible] = useState(false)
@@ -12,7 +13,7 @@ const Togglable = (props) => {
   }
 
   return (
-    <div>
+    <Container className='d-flex justify-content-center mt-3 mb-3'>
       <div style={hideWhenVisible}>
         <button onClick={toggleVisibility}>{props.buttonLabel}</button>
       </div>
@@ -20,7 +21,7 @@ const Togglable = (props) => {
         {props.children}
         <button onClick={toggleVisibility}>cancel</button>
       </div>
-    </div>
+    </Container>
   )
 }
 

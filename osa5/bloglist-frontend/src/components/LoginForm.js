@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { useField } from '../hooks/index'
 import { login } from '../reducers/loginReducer'
 import { createNotification } from '../reducers/notificationReducer'
-import { connect } from 'react-redux'
+import { connect } from 'react-redux'
+import { Container, Form, Button } from 'react-bootstrap'
 
 const LoginForm = (props) => {
   const username = useField('text')
@@ -23,15 +24,19 @@ const LoginForm = (props) => {
   }
 
   return (
-    <form onSubmit={handleLogin}>
-      username:
-      <input {...username} />
-      <br />
-      password:
-      <input {...password} />
-      <br />
-      <button type="submit">login</button>
-    </form>
+    <Container className='d-flex justify-content-center'>
+      <Form onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label>username:</Form.Label>
+          <Form.Control {...username} />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>password:</Form.Label>
+          <Form.Control {...password} />
+        </Form.Group>
+        <Button type="submit">login</Button>
+      </Form>
+    </Container>
   )
 }
 
