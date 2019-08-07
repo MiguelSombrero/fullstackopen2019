@@ -8,15 +8,15 @@ const CreateBlogForm = ({ onSubmit, title, author, url }) => {
       <h2>Create new blog</h2>
       <form onSubmit={onSubmit}>
         title:
-        <input {...title} />
+        <input {...title} data-cy='title' />
         <br />
         author:
-        <input {...author} />
+        <input {...author} data-cy='author' />
         <br />
         url:
-        <input {...url} />
+        <input {...url} data-cy='url' />
         <br />
-        <button type="submit">create</button>
+        <button type="submit" data-cy='create' >create</button>
       </form>
     </Container>
   )

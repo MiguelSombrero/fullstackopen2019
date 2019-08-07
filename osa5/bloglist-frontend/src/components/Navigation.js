@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { Navbar, Nav, Button } from 'react-bootstrap'
+import { Link, NavLink } from 'react-router-dom'
+import { Navbar, Nav } from 'react-bootstrap'
 import { logout } from '../reducers/loginReducer'
 
 const Navigation = (props) => {
@@ -16,8 +16,8 @@ const Navigation = (props) => {
       <Navbar.Toggle aria-controls='responsive-navbar-nav' />
       <Navbar.Collapse id='responsive-navbar-nav'>
         <Nav className='mr-auto'>
-          <Nav.Link href='#'>
-            <Link to='/blogs' >Blogs</Link>
+          <Nav.Link href='#' as='span'>
+            <Link to='/blogs' data-cy='blogs' >Blogs</Link>
           </Nav.Link>
           <Nav.Link href='#' as='span'>
             <Link to='/users' >Users</Link>

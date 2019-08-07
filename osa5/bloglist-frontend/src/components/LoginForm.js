@@ -27,14 +27,14 @@ const LoginForm = (props) => {
     <Container className='d-flex justify-content-center'>
       <Form onSubmit={handleLogin}>
         <Form.Group>
-          <Form.Label>username:</Form.Label>
-          <Form.Control {...username} />
+          <Form.Label >username:</Form.Label>
+          <Form.Control {...username} data-cy='username' />
         </Form.Group>
         <Form.Group>
           <Form.Label>password:</Form.Label>
-          <Form.Control {...password} />
+          <Form.Control {...password} data-cy='password' />
         </Form.Group>
-        <Button type="submit">login</Button>
+        <Button type="submit" data-cy='login' >login</Button>
       </Form>
     </Container>
   )
