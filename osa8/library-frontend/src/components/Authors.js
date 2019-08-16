@@ -1,14 +1,25 @@
 import React, { useState } from 'react'
-import { useApolloClient } from '@apollo/react-hooks'
 
-const Authors = ({ show, result }) => {
-  const client = useApolloClient()
+const Authors = ({ show, result, editAuthor }) => {
+  const [name, setName] = useState('')
+  const [born, setBorn] = useState('')
 
   if (!show || result.loading) {
     return null
   }
 
   const authors = result.data.allAuthors
+
+  const submit = async (event) => {
+    event.preventDefault()
+
+    await editAuthor({
+      variables: { name, born }
+    })
+
+    setName('')
+    setBorn('')
+  }
 
   return (
     <div>
@@ -33,7 +44,24 @@ const Authors = ({ show, result }) => {
           )}
         </tbody>
       </table>
-
+      <h2>Set birthyear</h2>
+      <form onSubmit={submit}>
+        <div>
+          name
+          <input
+            value={name}
+            onChange={({ target }) => setName(target.value)}
+          />
+        </div>
+        <div>
+          born
+          <input
+            value={born}
+            onChange={({ target }) => setBorn(Number(target.value))}
+          />
+        </div>
+        <button type='submit'>update author</button>
+      </form>
     </div>
   )
 }
