@@ -64,14 +64,6 @@ const LOGIN = gql`
     }
   }
 `
-const LOGGED_USER = gql`
-{
-  me {
-    username
-    favoriteGenre
-  }
-}
-`
 
 const App = () => {
   const [errorMessage, setErrorMessage] = useState('')
@@ -89,8 +81,7 @@ const App = () => {
 
   const authors = useQuery(ALL_AUTHORS)
   const books = useQuery(ALL_BOOKS)
-  const user = useQuery(LOGGED_USER)
-
+  
   const [addBook] = useMutation(ADD_BOOK, {
     refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }]
   })
@@ -156,8 +147,7 @@ const App = () => {
 
       <Recommended
         show={page === 'recommended'}
-        result={books}
-        user={user}
+        query={ALL_BOOKS}
       />
 
     </div>

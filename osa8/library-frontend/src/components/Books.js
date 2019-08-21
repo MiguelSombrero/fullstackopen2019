@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 const Books = ({ show, result }) => {
   const [filter, setFilter] = useState('')
+
   if (!show || result.loading) {
     return null
   }
@@ -12,6 +13,11 @@ const Books = ({ show, result }) => {
     filter.length < 1
     ? books
     : books.filter(book => book.genres.includes(filter))
+  
+  const uniqueGenres = () => {
+    const genres = books.map(book => book.genres).flat()
+    return [ ...new Set(genres) ]
+  }
   
   return (
     <div>
@@ -42,12 +48,10 @@ const Books = ({ show, result }) => {
         </tbody>
       </table>
       <div>
-        <button onClick={() => setFilter('')}>all books</button>
-        <button onClick={() => setFilter('refactoring')}>refactoring</button>
-        <button onClick={() => setFilter('agile')}>agile</button>
-        <button onClick={() => setFilter('patterns')}>patterns</button>
-        <button onClick={() => setFilter('design')}>design</button>
-        <button onClick={() => setFilter('war')}>war</button>
+        {uniqueGenres().map(genre =>
+          <button key={genre} onClick={() => setFilter(genre)}>{genre}</button> )
+        }
+         <button onClick={() => setFilter('')}>all books</button> 
       </div>
     </div>
   )
