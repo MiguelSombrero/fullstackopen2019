@@ -1,71 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { gql } from 'apollo-boost'
-import { useApolloClient } from '@apollo/react-hooks'
+import React from 'react'
 
-const LOGGED_USER = gql`
-{
-  me {
-    username
-    favoriteGenre
-  }
-}
-`
+const Recommended = ({ show, books, user }) => {
 
-const ALL_BOOKS_BY_GENRE = gql`
-  query allBooks($genre: String!) {
-    allBooks(genre: $genre) {
-      title
-      author {
-        name
-      }
-      published
-      genres
-      id
-    }
-  }
-`
-
-const Recommended = ({ show, query }) => {
-  const [books, setBooks] = useState([])
-  const [user, setUser] = useState('')
-
-  const client = useApolloClient()
-
-  console.log(books)
-  console.log(user)
-
-  const fetchUser = async () => {
-    const { data } = await client.query({
-      query: LOGGED_USER,
-    })
-    setUser(data.me)
-  }
-
-  const fetchBooks = async () => {
-    const { data } = await client.query({
-      query: ALL_BOOKS_BY_GENRE,
-      variables: { genre: user.favoriteGenre || '' },
-      update: (store, response) => {
-      const dataInStore = store.readQuery({ query })
-      dataInStore.allBooks.push(response.data.addBook)
-      store.writeQuery({
-        query,
-        data: dataInStore
-      })
-    }
-    })
-    setBooks(data.allBooks)
-  }
-
-  useEffect(() => {
-    fetchUser()
-  }, [])
-
-  useEffect(() => {
-    fetchBooks()
-  }, [books])
-
-  if (!show || !user || !books) {
+  if (!show || books.loading || !user ) {
     return null
   }
 
@@ -86,7 +23,7 @@ const Recommended = ({ show, query }) => {
               published
             </th>
           </tr>
-          {books.map(a =>
+          {books.data.allBooks.map(a =>
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
