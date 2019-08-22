@@ -85,53 +85,38 @@ const BOOK_ADDED = gql`
   ${BOOK_DETAILS}
 `
 
-const LOGGED_USER = gql`
-{
-  me {
-    username
-    favoriteGenre
-  }
-}
-`
-
-const ALL_BOOKS_BY_GENRE = gql`
-  query allBooksByGenre($genre: String!) {
-    allBooks(genre: $genre) {
-      title
-      author {
-        name
-      }
-      published
-      genres
-      id
-    }
-  }
-`
-
 const App = () => {
+  const client = useApolloClient()
   const [errorMessage, setErrorMessage] = useState('')
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
-  const [user, setUser] = useState('')
+  //const [books, setBooks] = useState([])
 
   useEffect(() => {
-    fetchUser()
-  }, [token])
+    const loggedUser = window.localStorage.getItem('library-user-token')
+    if (loggedUser) {
+      setToken(loggedUser)
+    }
+  }, [])
 
-  const client = useApolloClient()
+  /**
+  useEffect(() => {
+    fetchBooks()
+  }, [])
+
+  const fetchBooks = async () => {
+    const { data } = await client.query({
+      query: ALL_BOOKS
+    })
+    setBooks(data.allBooks)
+  }
+   */
 
   const handleError = (error) => {
     setErrorMessage(error.graphQLErrors[0].message)
     setTimeout(() => {
       setErrorMessage(null)
     }, 10000)
-  }
-
-  const fetchUser = async () => {
-    const { data } = await client.query({
-      query: LOGGED_USER
-    })
-    setUser(data.me)
   }
 
   const updateCacheWith = (addedBook) => {
@@ -147,7 +132,7 @@ const App = () => {
       })
     }   
   }
-  
+
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
       const addedBook = subscriptionData.data.bookAdded
@@ -158,13 +143,7 @@ const App = () => {
 
   const authors = useQuery(ALL_AUTHORS)
   const books = useQuery(ALL_BOOKS)
-  const usersBooks = useQuery(ALL_BOOKS_BY_GENRE, {
-    variables: { genre: user ? user.favoriteGenre : '' }
-  })
-
-  console.log(user)
-  console.log('käyttäjän kirjat', usersBooks)
-
+  
   const [addBook] = useMutation(ADD_BOOK, {
     onError: handleError,
     update: (store, response) => {
@@ -233,8 +212,7 @@ const App = () => {
 
       <Recommended
         show={page === 'recommended'}
-        user={user}
-        books={usersBooks}
+        result={books}
       />
 
     </div>

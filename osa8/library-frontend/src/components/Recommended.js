@@ -1,8 +1,59 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useApolloClient } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
 
-const Recommended = ({ show, books, user }) => {
+const LOGGED_USER = gql`
+{
+  me {
+    username
+    favoriteGenre
+  }
+}
+`
 
-  if (!show || books.loading || !user ) {
+const ALL_BOOKS_BY_GENRE = gql`
+  query allBooksByGenre($genre: String!) {
+    allBooks(genre: $genre) {
+      title
+      author {
+        name
+      }
+      published
+      genres
+      id
+    }
+  }
+`
+
+const Recommended = ({ show, result }) => {
+  const client = useApolloClient()
+  const [user, setUser] = useState('')
+  const [usersBooks, setUsersBooks] = useState([])
+  
+  useEffect(() => {
+    fetchUser()
+  }, [])
+
+  useEffect(() => {
+    fetchUsersBooks()
+  }, [result, user])
+
+  const fetchUser = async () => {
+    const { data } = await client.query({
+      query: LOGGED_USER
+    })
+    setUser(data.me)
+  }
+
+  const fetchUsersBooks = async () => {
+    const { data } = await client.query({
+      query: ALL_BOOKS_BY_GENRE,
+      variables: { genre: user ? user.favoriteGenre : '' }
+    })
+    setUsersBooks(data.allBooks)
+  }
+
+  if (!show || result.loading || !user ) {
     return null
   }
 
@@ -23,7 +74,7 @@ const Recommended = ({ show, books, user }) => {
               published
             </th>
           </tr>
-          {books.data.allBooks.map(a =>
+          {usersBooks.map(a =>
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 const Books = ({ show, result }) => {
   const [filter, setFilter] = useState('')
 
-  if (!show || result.loading) {
+  if (!show || result.loading ) {
     return null
   }
 
